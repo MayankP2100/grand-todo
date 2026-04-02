@@ -1,9 +1,11 @@
 ﻿using dotnet_backend.Modules.Todos.Entities;
+using dotnet_backend.Modules.Users.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_backend.Data
 {
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<TodoItem> Todos { get; set; }
 

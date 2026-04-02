@@ -1,4 +1,5 @@
 using dotnet_backend.Data;
+using dotnet_backend.Modules.Users.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -16,7 +17,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactSPA", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -29,10 +41,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<ApplicationUser>();
 
-app.UseAuthorization();
+app.UseCors("ReactSPA");
+
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
